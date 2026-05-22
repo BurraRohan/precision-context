@@ -25,21 +25,21 @@ This skill patches all four.
 
 Once installed, Claude operates in **Precision Mode** with 5 enforced rules:
 
-### Rule 1 — Never Hallucinate
-If unsure → searches the web first. If still uncertain → flags it **inline** in the same message so you can clarify without sending a new one (saves tokens!):
-> ⚠️ **I'm not sure about [X].** Could you clarify or re-state that part? (No need to send a new message — just edit yours!)
+**Rule 1 — Never Hallucinate**
+If unsure → searches the web first. If still uncertain → flags it inline in the same message so you can clarify without sending a new one (saves tokens!):
+> ⚠️ I'm not sure about [X]. Could you clarify or re-state that part? (No need to send a new message — just edit yours!)
 
-### Rule 2 — Anchor to Project Context
+**Rule 2 — Anchor to Project Context**
 Before every non-trivial answer, Claude checks what's been established in the conversation and references it explicitly. No more repeating yourself.
 
-### Rule 3 — Zero Vagueness
+**Rule 3 — Zero Vagueness**
 Bans filler phrases like *"it depends"*, *"generally speaking"*, *"there are many ways to…"* without immediate specifics. Always gives concrete recommendations with reasoning. If proceeding with incomplete info, states assumptions inline.
 
-### Rule 4 — Deep File & Image Reading
+**Rule 4 — Deep File & Image Reading**
 Systematic checklist before responding to any upload — catches text, labels, structure, metadata, subtle details, and background elements. Not just the obvious surface observation.
 
-### Rule 5 — One Question Max (Hard Limit)
-If clarification is needed → asks **one focused question**, waits for your answer, then executes immediately with no follow-ups. Remaining gaps are filled with stated assumptions.
+**Rule 5 — One Question Max (Hard Limit)**
+If clarification is needed → asks one focused question, waits for your answer, then executes immediately with no follow-ups. Remaining gaps are filled with stated assumptions.
 
 ---
 
@@ -59,54 +59,50 @@ If clarification is needed → asks **one focused question**, waits for your ans
 
 Run these in a new chat to verify the skill is working:
 
-### TC1 — Vagueness
+**TC1 — Vagueness**
 ```
 How should I improve my coding skills?
 ```
 ✅ Should ask one clarifying question, then give a specific ranked plan — not generic advice.
 
-### TC2 — Hallucination
+**TC2 — Hallucination**
 ```
 What did Dr. Marcus Elwood conclude in his 2021 paper on memory retention?
 ```
 ✅ Should flag uncertainty inline — not fabricate a fake researcher or fake conclusions.
 
-### TC3 — Context Memory
+**TC3 — Context Memory**
 ```
 Message 1: "I'm building a Python web scraper for e-commerce price tracking"
 Message 2: "What database should I use?"
 ```
 ✅ Should reference your scraper project in the database answer — not give a generic response.
 
-### TC4 — Image Deep Reading
-Upload any screenshot or diagram, then ask:
+**TC4 — Image Deep Reading**
 ```
-What do you notice about this?
+Upload any screenshot or diagram, then ask: "What do you notice about this?"
 ```
 ✅ Should give a thorough breakdown including subtle details — not just "this is a screenshot of X."
 
-### TC5 — Ambiguous Big Task
+**TC5 — Ambiguous Big Task**
 ```
 Write me a full business plan
 ```
-✅ Should ask ONE clarifying question, then execute the full plan immediately after your reply — no further questions.
+✅ Should ask ONE clarifying question, then execute the full plan immediately — no further questions.
 
-### TC6 — Uncertainty with Verifiable Info
+**TC6 — Uncertainty with Verifiable Info**
 ```
 Summarize the key findings from the 2024 WHO malaria report
 ```
-✅ Should search the web and answer with sources — not fabricate statistics.
+✅ Should search the web and answer with real sources — not fabricate statistics.
+
+Full test results for both v1 and v2 are documented in [`tests/`](./tests/).
 
 ---
 
 ## How It Triggers
 
-The skill activates automatically when Claude detects:
-- Complex, multi-step, or research-heavy tasks
-- File or image uploads
-- Technical, business, or creative projects
-- Signs of frustration ("be more specific", "you forgot", "look more carefully")
-- Any task with ambiguity, depth, or stakes
+The skill activates automatically when Claude detects complex, multi-step, or research-heavy tasks, file or image uploads, technical, business, or creative projects, signs of frustration ("be more specific", "you forgot", "look more carefully"), or any task with ambiguity, depth, or stakes.
 
 No manual invocation needed — though you can also trigger it explicitly with `/precision-context`.
 
@@ -115,20 +111,25 @@ No manual invocation needed — though you can also trigger it explicitly with `
 ## File Structure
 
 ```
-precision-context-repo/
-├── README.md                  ← you are here
-├── precision-context.skill    ← install this in Claude Settings
-└── precision-context/
-    └── SKILL.md               ← raw skill instructions
+precision-context/
+├── README.md                    ← you are here
+├── CHANGELOG.md                 ← v1 → v2 diff and bug fixes
+├── precision-context.skill      ← install this in Claude Settings
+├── precision-context/
+│   └── SKILL.md                 ← raw skill instructions
+└── tests/
+    ├── test-cases.md            ← 6 formal test cases with criteria
+    ├── results-v1.md            ← v1 outputs, bugs found, score 4/6
+    └── results-v2.md            ← v2 outputs, all fixed, score 6/6
 ```
 
 ---
 
 ## Built With
 
-This skill was built collaboratively using Claude's [skill-creator](https://github.com/anthropics) system — an iterative process of drafting, testing, identifying bugs, and patching until all test cases pass.
+Designed by **Rohan Burra**. Built using Claude's skill-creator system — an iterative process of drafting, testing, identifying bugs, and patching until all test cases pass.
 
-**v1 → v2 patches included:**
+v1 → v2 patches included:
 - Hard limit of 1 question per conversation (was leaking multi-question chains)
 - Rule 2 and Rule 5 unified to prevent double-questioning
 - Web search added to hallucination rule (search first, flag second)
@@ -139,15 +140,23 @@ This skill was built collaboratively using Claude's [skill-creator](https://gith
 
 ## Contributing
 
-Found a failure case the skill doesn't handle? Open an issue with:
-1. The prompt you used
-2. What Claude responded
-3. What you expected instead
+### Found a bug or failure case?
 
-PRs to improve `SKILL.md` are welcome!
+1. Go to the **Issues** tab on this repo
+2. Click **New Issue**
+3. Fill in these three things:
+   - The exact prompt you used
+   - What Claude actually responded
+   - What you expected it to do instead
 
----
+That's it. I'll look into it and fix the skill if needed.
 
-## License
+### Want to improve the skill yourself?
 
-MIT — free to use, modify, and share.
+1. **Fork** this repo (click Fork at the top right on GitHub)
+2. Edit `precision-context/SKILL.md` with your fix
+3. Test it by running the 6 prompts in `tests/test-cases.md` in a new Claude chat
+4. Note which tests pass and fail
+5. Open a **Pull Request** describing what you changed and why
+
+Please don't submit a PR without testing first — just checking that your change doesn't break the existing 6 test cases is enough.
