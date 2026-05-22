@@ -1,5 +1,11 @@
 # 🎯 precision-context — Claude Skill
 
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Version](https://img.shields.io/badge/version-v2.0-green)
+![Claude](https://img.shields.io/badge/Claude-Skill-orange)
+![Status](https://img.shields.io/badge/tests-6%2F6%20passing-brightgreen)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+
 > Stop Claude from hallucinating, being vague, forgetting your project, or skimming your files.
 
 A Claude skill that fixes the **4 most frustrating AI failure modes** — automatically, across any type of project.
